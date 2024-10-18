@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  name      String
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Tickets   Tickets[]
+}
+
+enum PrizeCategory {
+  ELECTRONIC
+  FASHION
+  HOME
+  KITCHEN
+  TOY
+  OTHER
+}
+
+model Prize {
+  id          String         @id @default(cuid())
+  title       String
+  description String
+  image       String
+  quantity    Int
+  price       Float
+  category    PrizeCategory?
+  createdAt   DateTime?      @default(now())
+  updatedAt   DateTime?      @updatedAt
+  drawnDate   DateTime?
+  tickets     Tickets[]
+}
+
+model Tickets {
+  id           String    @id @default(cuid())
+  prizeId      String?
+  userId       String?
+  ticketNumber String?  @unique
+  quantity     Int?
+  user         User ?     @relation(fields: [userId], references: [id])
+  prize        Prize?     @relation(fields: [prizeId], references: [id])
+  createdAt    DateTime? @default(now())
+  updatedAt    DateTime? @updatedAt
+}
+
+model Winner{
+  id String @id @default(cuid())
+  
+}
+
